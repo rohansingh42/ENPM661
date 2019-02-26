@@ -14,7 +14,7 @@ struct node {
     int c2c=0;
     int voidpos=0;
 
-    /*bool operator<(const node &other) const {return id < other.id;}
+    bool operator<(const node &other) const {return id < other.id;}
     bool operator>(const node &other) const {return id < other.id;}
     bool operator==(const node &other) const { 
         for(int i=0; i<9; i++){
@@ -23,10 +23,11 @@ struct node {
             }
         }
         return false;
-    }*/
+    }
 };
 
-/*bool compareNode(const node &a, const node &b){   
+bool compareNode(const node &a, const node &b)
+{   
     // for(int i=0; i<9; i++){
     //     if(a.state[i]==b.state[i]){
     //         continue;
@@ -35,13 +36,13 @@ struct node {
     // }
     // return false;
     return a.id < b.id;
-}*/
+}
 
 class puzzle {
 //    public :
 
     std::vector<node> Nodes;
-    // std::set<node> Nodeset;
+    std::set<node> Nodeset;
     node node_init, node_goal;
     int* goal_state;
     std::vector<int> nodePath;
@@ -49,7 +50,7 @@ class puzzle {
     public :
 
     puzzle(){
-        // std::cout<<1<<"\n";
+        std::cout<<1<<"\n";
         int start[9] = {0, 4, 7, 1, 2, 8, 3, 5, 6};   //column wise
         int end[9] = {1, 4, 7, 2, 5, 8, 3, 6, 0}; 
         for(int i=0; i<9; i++){
@@ -64,7 +65,7 @@ class puzzle {
             node_goal.state[i]=end[i];
         }
         node_goal.voidpos = 9;
-        // Nodeset.insert(node_init);
+        Nodeset.insert(node_init);
     }
 
     puzzle(int* start){
@@ -86,8 +87,8 @@ class puzzle {
                 node_goal.voidpos = i+1;
             }
         }
-        // std::cout<<Nodes.size()<<"\n";
-        // Nodeset.insert(node_init);
+        std::cout<<Nodes.size()<<"\n";
+        Nodeset.insert(node_init);
     }
 
     puzzle(int* start, int* end){
@@ -107,31 +108,8 @@ class puzzle {
                 node_goal.voidpos = i+1;
             }
         }
-        // Nodeset.insert(node_init);
+        Nodeset.insert(node_init);
     }
-
-    bool checkSolvability(){
-        int invcount = 0;
-        int arr[9];
-        int j;
-        for(int j = 0;j<3;j++){
-            for(int i=0; i<3; i++){
-                arr[i + j*3] = Nodes[0].state[j + i*3];
-            }
-        }
-        for(int i=0;i<9-1;i++){
-            for(int j=i+1;j<9;j++){
-                if(arr[j] && arr[i] && arr[i]>arr[j]){
-                invcount++;
-                }
-            }
-        }
-        return (invcount%2 == 0);
-    }
-    /*bool isSolvable(int puzzle[3][3]){
-        int invCount = getInvCount((int*)puzzle);
-        return (invCount%2 == 0);
-    }*/
 
     node moveUp(int currentid){
         node next;
@@ -191,8 +169,7 @@ class puzzle {
     }
     bool bsearch(){
         bool ret;
-        bool flag = true;
-        // std::set<node>::iterator it;
+        std::set<node>::iterator it;
         std::vector<int> parentids;
         //parentids.push_back(0);
         //std::cout<<999;
@@ -201,6 +178,7 @@ class puzzle {
 
         parentids.push_back(Nodes[0].id);
         //std::cout<<parentids[0];
+        bool flag = true;
         while(flag){
             for(int i=0; i<parentids.size(); i++){
                 int m,n;
@@ -232,38 +210,38 @@ class puzzle {
                 if((m-1>0) && (c-1!=p)){                           //UP
                     node next = moveUp(currentid);
                     // it = Nodeset.find(next);
-                    if(checkUnique(next)){
+                    if(!Nodeset.count(next)){
                         childids.push_back(next.id);
                         Nodes.push_back(next);
-                        // Nodeset.insert(next);
+                        Nodeset.insert(next);
                     }
                 }
                 if((m+1<4) && (c+1!=p)){
                     node next = moveDown(currentid);
                     // it = Nodeset.find(next);
-                    if(checkUnique(next)){
+                    if(!Nodeset.count(next)){
                         childids.push_back(next.id);
                         Nodes.push_back(next);
-                        // Nodeset.insert(next);
+                        Nodeset.insert(next);
                     }
                 }
                 if((n-1>0) && (c-3!=p)){
                     node next = moveLeft(currentid);
                     // it = Nodeset.find(next);
-                    if(checkUnique(next)){
+                    if(!Nodeset.count(next)){
                         childids.push_back(next.id);
                         Nodes.push_back(next);
-                        // Nodeset.insert(next);
+                        Nodeset.insert(next);
                     }
                 }
                 if((n+1<4) && (c+3!=p)){
                     node next = moveRight(currentid);
                     // std::cout<<Nodeset.count(next);
                     // it = Nodeset.find(next);
-                    if(checkUnique(next)){
+                    if(!Nodeset.count(next)){
                         childids.push_back(next.id);
                         Nodes.push_back(next);
-                        // Nodeset.insert(next);
+                        Nodeset.insert(next);
                     }   
                 }
             }
@@ -272,8 +250,8 @@ class puzzle {
             // }
             // std::cout<<" : iter no. : "<<t<<"\n";
             // t++;
-            // std::cout<<parentids.size()<<"\t";
-            if(Nodes.size()>400000 || parentids.empty()){
+            std::cout<<Nodeset.size()<<"\t";
+            if(Nodes.size()>4000000 || parentids.empty()){
                 //std::cout<<Nodes.size();
                 printf("Goal can't be reached. Total nodes searched = %d.\nQuitting program.\n",Nodes.size());
                 ret = false;
@@ -281,7 +259,7 @@ class puzzle {
             }
             parentids = childids;
             childids.clear();
-            printf("Nodes searched so far = %d\n",Nodes.size());
+            std::cout<<Nodes.size()<<"\n";
         }
         return ret;
     }
@@ -410,7 +388,7 @@ int main(int argc, char* argv[])
         int len1 = strlen(argv[2]);
         int start[9];
         if(len1!=9){
-            printf("Too many or too few elements in start state vector. Execute command again.%d",len1);
+            printf("Too many or too few elements in start state vector. Execute command again%d",len1);
         }
         else{
             char* st = argv[2];
@@ -430,10 +408,7 @@ int main(int argc, char* argv[])
             }
             else{
                 puzzle puz(start);
-                if(!puz.checkSolvability()){
-                    printf("Given state not solvable. Quitting.\n");
-                }
-                else if(puz.bsearch()){
+                if(puz.bsearch()){
                     puz.printPath();
                 }
                 puz.generatetxt();

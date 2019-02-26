@@ -2,16 +2,23 @@
 // by iterative method. 
 #include<iostream> 
 #include<vector> 
+#include<set>
 //using namespace std; 
 
 struct a{
     int b=1;
     int c=0;
+    bool operator<(const a &other) const { return b<other.b;}
+    bool operator==(const a &other) const { return b==other.b;}
 }; 
 int main() 
 { 
+    std::set<a>::iterator it;
     // Initializing vector with values 
     std::vector<int> vect1{1, 2, 3, 4}; 
+    std::set<a> testset;
+    a te;
+    testset.insert(te);
     //int vect1[2] = {1,2};
     // Declaring new vector 
     std::vector<int> vect2{7, 8, 9}; 
@@ -39,10 +46,15 @@ int main()
     std::cout << "The first element of old vector is :"; 
     std::cout << vect1[0] << std::endl; 
     std::cout << "The first element of new vector is :"; 
-    std::cout << vect2[0] <<std::endl; 
+    std::cout << vect2[0] <<std::endl;
 
-    a t;
+    a t,r;
     t.b = 0;
+    r.b = 0;
+    testset.insert(t);
+    it = testset.find(r);
+    std::cout<<testset.count(r);
+    if(!testset.count(r)){std::cout<<"hdhdh";}
     int* y;
     int* z;
     int p[2] = {9,8};
@@ -51,8 +63,13 @@ int main()
     std::cout<<z[1];
     int h[2]={0,1};
     int g[2];
-    g=h;
+    // g=h;
     std::cout<<g[1];
+
+    int arr[3][3] = {{1,2,3},{4,5,6},{7,8,9}};
+    int *temp;
+    temp = (int*)arr;
+    for(int i=0;i<9;i++){std::cout<<temp[i];}
   
     return 0; 
 }
