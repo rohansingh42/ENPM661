@@ -5,6 +5,7 @@
 #include<algorithm>
 #include<string.h>
 #include<set>
+#include<cmath>
 
 
 struct node { 
@@ -13,6 +14,7 @@ struct node {
     int parentid=0;
     int c2c=0;
     int voidpos=0;
+    uint64_t nodeid = 0;
 
     /*bool operator<(const node &other) const {return id < other.id;}
     bool operator>(const node &other) const {return id < other.id;}
@@ -41,7 +43,7 @@ class puzzle {
 //    public :
 
     std::vector<node> Nodes;
-    // std::set<node> Nodeset;
+    std::set<uint64_t> Nodeset;
     node node_init, node_goal;
     int* goal_state;
     std::vector<int> nodePath;
@@ -54,6 +56,7 @@ class puzzle {
         int end[9] = {1, 4, 7, 2, 5, 8, 3, 6, 0}; 
         for(int i=0; i<9; i++){
             node_init.state[i]=start[i];
+            node_init.nodeid = node_init.nodeid + start[i]*pow(10,8-i);
         }
         node_init.id = 0;
         node_init.parentid = 0;
@@ -62,9 +65,10 @@ class puzzle {
         Nodes.push_back(node_init);
         for(int i=0; i<9; i++){
             node_goal.state[i]=end[i];
+            node_goal.nodeid = node_goal.nodeid + end[i]*pow(10,8-i);
         }
         node_goal.voidpos = 9;
-        // Nodeset.insert(node_init);
+        Nodeset.insert(Nodes[0].nodeid);
     }
 
     puzzle(int* start){
@@ -72,6 +76,7 @@ class puzzle {
         for(int i=0; i<9; i++){
             node_init.state[i]=start[i];
             //std::cout<<node_init.state[i];
+            node_init.nodeid = node_init.nodeid + start[i]*pow(10,8-i);
             if(start[i] == 0){
                 node_init.voidpos = i+1;
             }
@@ -82,33 +87,39 @@ class puzzle {
         Nodes.push_back(node_init);
         for(int i=0; i<9; i++){
             node_goal.state[i]=end[i];
+            node_goal.nodeid = node_goal.nodeid + end[i]*pow(10,8-i);
             if(end[i] == 0){
                 node_goal.voidpos = i+1;
             }
         }
-        // std::cout<<Nodes.size()<<"\n";
-        // Nodeset.insert(node_init);
+        std::cout<<Nodes.size()<<"\n";
+        Nodeset.insert(Nodes[0].nodeid);
     }
 
     puzzle(int* start, int* end){
         for(int i=0; i<9; i++){
             node_init.state[i]=start[i];
+            node_init.nodeid = node_init.nodeid + start[i]*pow(10,8-i);
+            // std::cout<<(10^2)<<"\n";//((uint64_t)end[i])*((uint64_t)((10)^(9-i)))<<"\n";
             if(start[i] == 0){
                 node_init.voidpos = i+1;
             }
         }
+        std::cout<<node_init.nodeid<<"\n";
         node_init.id = 0;
         node_init.parentid = 0;
         node_init.c2c = 0;
         Nodes.push_back(node_init);
         for(int i=0; i<9; i++){
             node_goal.state[i]=end[i];
+            node_goal.nodeid = node_goal.nodeid + end[i]*pow(10,8-i);
             if(end[i] == 0){
                 node_goal.voidpos = i+1;
             }
         }
-        // Nodeset.insert(node_init);
+        Nodeset.insert(Nodes[0].nodeid);
     }
+
 
     bool checkSolvability(){
         int invcount = 0;
@@ -145,6 +156,9 @@ class puzzle {
         next.parentid = currentid;
         next.voidpos = c-1;
         next.c2c = Nodes[currentid].c2c + 1;
+        for(int i=0;i<9;i++){
+            next.nodeid = next.nodeid + next.state[i]*pow(10,8-i);
+        }
         return next;
     }
     node moveDown(int currentid){
@@ -159,6 +173,9 @@ class puzzle {
         next.parentid = currentid;
         next.voidpos = c+1;
         next.c2c = Nodes[currentid].c2c + 1;
+        for(int i=0;i<9;i++){
+            next.nodeid = next.nodeid + next.state[i]*pow(10,8-i);
+        }
         return next;
     }
     node moveLeft(int currentid){
@@ -173,6 +190,9 @@ class puzzle {
         next.parentid = currentid;
         next.voidpos = c-3;
         next.c2c = Nodes[currentid].c2c + 1;
+        for(int i=0;i<9;i++){
+            next.nodeid = next.nodeid + next.state[i]*pow(10,8-i);
+        }
         return next;
     }
     node moveRight(int currentid){
@@ -187,6 +207,9 @@ class puzzle {
         next.parentid = currentid;
         next.voidpos = c+3;
         next.c2c = Nodes[currentid].c2c + 1;
+        for(int i=0;i<9;i++){
+            next.nodeid = next.nodeid + next.state[i]*pow(10,8-i);
+        }
         return next;
     }
     bool bsearch(){
@@ -235,6 +258,7 @@ class puzzle {
                     if(checkUnique(next)){
                         childids.push_back(next.id);
                         Nodes.push_back(next);
+                        Nodeset.insert(next.nodeid);
                         // Nodeset.insert(next);
                     }
                 }
@@ -244,6 +268,7 @@ class puzzle {
                     if(checkUnique(next)){
                         childids.push_back(next.id);
                         Nodes.push_back(next);
+                        Nodeset.insert(next.nodeid);
                         // Nodeset.insert(next);
                     }
                 }
@@ -253,6 +278,7 @@ class puzzle {
                     if(checkUnique(next)){
                         childids.push_back(next.id);
                         Nodes.push_back(next);
+                        Nodeset.insert(next.nodeid);
                         // Nodeset.insert(next);
                     }
                 }
@@ -263,6 +289,7 @@ class puzzle {
                     if(checkUnique(next)){
                         childids.push_back(next.id);
                         Nodes.push_back(next);
+                        Nodeset.insert(next.nodeid);
                         // Nodeset.insert(next);
                     }   
                 }
@@ -273,6 +300,7 @@ class puzzle {
             // std::cout<<" : iter no. : "<<t<<"\n";
             // t++;
             // std::cout<<parentids.size()<<"\t";
+            parentids = childids;
             if(Nodes.size()>400000 || parentids.empty()){
                 //std::cout<<Nodes.size();
                 printf("Goal can't be reached. Total nodes searched = %d.\nQuitting program.\n",Nodes.size());
@@ -341,20 +369,20 @@ class puzzle {
     }
 
     bool checkUnique(node child){
-        int c = 0;
-        for(int i=0;i<Nodes.size();i++){
-            c = 0;
-            for(int j=0;j<9;j++){
-                if(Nodes[i].state[j]==child.state[j]){
-                    c+=1;
-                    continue;
-                }
-            }
-            if(c == 9){
-                return false;
-            }
-        }
-        return true;
+        // int c = 0;
+        // for(int i=0;i<Nodes.size();i++){
+        //     c = 0;
+        //     for(int j=0;j<9;j++){
+        //         if(Nodes[i].state[j]==child.state[j]){
+        //             c+=1;
+        //             continue;
+        //         }
+        //     }
+        //     if(c == 9){
+        //         return false;
+        //     }
+        // }
+        return Nodeset.count(child.nodeid) == 0;
     }
 
     void printPath(){    

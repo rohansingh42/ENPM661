@@ -13,12 +13,12 @@ struct a{
 }; 
 int main() 
 { 
-    std::set<a>::iterator it;
+    // std::set<a>::iterator it;
     // Initializing vector with values 
     std::vector<int> vect1{1, 2, 3, 4}; 
-    std::set<a> testset;
+    std::set<int> testset;
     a te;
-    testset.insert(te);
+    // testset.insert(te);
     //int vect1[2] = {1,2};
     // Declaring new vector 
     std::vector<int> vect2{7, 8, 9}; 
@@ -51,25 +51,30 @@ int main()
     a t,r;
     t.b = 0;
     r.b = 0;
-    testset.insert(t);
-    it = testset.find(r);
-    std::cout<<testset.count(r);
-    if(!testset.count(r)){std::cout<<"hdhdh";}
-    int* y;
-    int* z;
-    int p[2] = {9,8};
-    y=p; 
-    z=y;
-    std::cout<<z[1];
-    int h[2]={0,1};
-    int g[2];
-    // g=h;
-    std::cout<<g[1];
 
-    int arr[3][3] = {{1,2,3},{4,5,6},{7,8,9}};
-    int *temp;
-    temp = (int*)arr;
-    for(int i=0;i<9;i++){std::cout<<temp[i];}
+    int y;
+    int z;
+    int p[2] = {9,8};
+    int q[2] = {9,8};
+    y = 2;
+    z = 2;
+    testset.insert(y);
+    auto it = testset.find(z);
+    std::cout<<testset.count(z);
+    if(it == testset.end()){std::cout<<"hdhdh";}
+
+    // y=p; 
+    // z=y;
+    // std::cout<<z[1];
+    // int h[2]={0,1};
+    // int g[2];
+    // // g=h;
+    // std::cout<<g[1];
+
+    // int arr[3][3] = {{1,2,3},{4,5,6},{7,8,9}};
+    // int *temp;
+    // temp = (int*)arr;
+    // for(int i=0;i<9;i++){std::cout<<temp[i];}
   
     return 0; 
 }
